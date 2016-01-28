@@ -30,7 +30,39 @@ tx[,.N,by=item]
 
 #count the number of transactions for each day
 tx[,.N,by=as.Date(time)]
-
+tx[,date:=as.Date(time)]
 
 #count the overall number of items sold on each day
 tx[,sum(amount),by=as.Date(time)]
+tx[,.(sum = sum(amount)),by=date]
+
+
+#merge items to tx
+tx2<-merge(tx, items, by='item')
+tx2
+
+setkey(tx, item)
+setkey(items, item)
+str(tx)
+items[tx]
+
+setkey(tx, item, date)
+setkey(prices, item, date)
+prices[tx]
+
+#rename
+names(prices)[1] <- 'foobar'
+str(prices)
+setkey(prices, foobar, date)
+tx<-tx[prices]
+str(tx)
+#sum
+tx[,.(sum=sum(weight)),by=date]
+
+#number of sold items per color
+tx[,sum(amount),by=color]
+
+#number of tx per color and date
+tx[,.N,by=.(color,date)]
+
+table(tx$color,tx$date)
