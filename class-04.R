@@ -66,3 +66,10 @@ tx[,sum(amount),by=color]
 tx[,.N,by=.(color,date)]
 
 table(tx$color,tx$date)
+
+#install reshape2
+library(reshape2)
+ft<-tx[,.N,by=.(color,date)]
+ft
+ft<- dcast(ft,date ~ color)
+melt(ft, id.vars = 'date')
