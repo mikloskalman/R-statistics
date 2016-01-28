@@ -73,3 +73,9 @@ ft<-tx[,.N,by=.(color,date)]
 ft
 ft<- dcast(ft,date ~ color)
 melt(ft, id.vars = 'date')
+
+tx[1]
+tx[is.na(color),color:='blue']
+tx
+tx[item=='a', item:='aaaaaa']
+tx
