@@ -19,3 +19,8 @@ ft
 df[,sum(applicants),by=.(department,gender)]
 
 
+library(reshape2)
+ft<- dcast(df,department~gender)
+setDT(ft)
+ft[,ratio := f / m * 100]
+ft
