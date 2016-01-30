@@ -1,35 +1,53 @@
 library(nycflights13)
-
+library(data.table)
 #count the number of flights to LAX
 str(flights)
 flightsDT <- flights
 setDT(flightsDT)
-DT[,sum(v),by=colA][V1<300][tail(order(V1))]
+
 flightsDT[,.N,by='dest'][dest=='LAX']
 flightsDT[,.N,dest=='LAX']
 
+#solution
+flights <- data.table(nycflights13::flights)
+flights[dest=='LAX',.N]
 
 #count the number of flights to LAX from JFK
-length(flightsDT[dest=='LAX' & origin=='JFK'])
-flightsDT[,.N,by='dest'][dest=='LAX' & origin=='JFK']
-
+flights[dest=='LAX' & origin=='JFK',.N]
 
 
 library(sqldf)
-sqldf("Select dest, count(*) as cnt from flights where dest='LAX' and origin='JFK' Group by dest")
-
+v<-sqldf("select  count(*) as cnt from flights where dest='LAX' and origin='JFK'")
+str(v)
 
 
 #compute the average delay (in minutes) for flights from JFK to LAX
-flightsDT[,total_delay:=dep_delay+arr_delay]
-filtered = flightsDT[ dest=='LAX' & origin=='JFK']
-flightsDT[is.na(dep_delay)] <- 0
+flights[dest=='LAX' & origin=='JFK', mean(arr_delay, na.rm = TRUE)]
+#mean <- function(x,...) base::mean(x,na.rm=TRUE,...)
 
-mean(filtered$total_delay)
 
 #which destination has the lowest average delay from JFK?
+flights[origin=='JFK', .(avg_delay=mean(arr_delay, na.rm=TRUE)),by=dest][order(avg_delay)]
+flightsa <- flights[origin=='JFK', .(avg_delay=mean(arr_delay, na.rm=TRUE)),by=dest]
+setorder(flightsa,avg_delay)
+flightsa[1]
+head(flightsa,1)
+#head (-1) all but last
+##?which.min
+
 #plot the average delay to all destinations from JFK
+str(flightsa)
+library(ggplot2)
+ggplot(flightsa, aes(x=dest, y=avg_delay)) + geom_bar(stat="identity")
+#show bars by average delay
+setorder(flightsa, avg_delay)
+flightsa$dest
+flightsa[, dest := factor(dest, levels=flightsa$dest)]
+ggplot(flightsa, aes(x=dest, y=avg_delay)) + geom_bar(stat="identity") + coord_flip() + ggtitle("Average Delay to airports") + xlab("destination") + ylab('minutes') + theme_bw()
+
 #plot the distribution of all flight delays to all destinations from JFK
+ggplot(flights, aes(x=dest, y=arr_delay)) + geom_boxplot()
+
 #compute a new variable in flights showing the week of day
 #plot the number of flights per weekday
 #create a heatmap on the number of flights per weekday and hour of the day (see geom_tile)
