@@ -70,3 +70,8 @@ library(class)
 res <- knn(train[,1:4,with=FALSE], test[,1:4,with=FALSE], train$Species, k=6)
 str(res)
 table(res, test$Species)
+#nbclust
+
+#calculate optimal cluster count
+library(NbClust)
+NbClust(iris[,1:4,with=FALSE],method='complete')
