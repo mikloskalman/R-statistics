@@ -1,0 +1,31 @@
+---
+title: "testpres"
+output: ioslides_presentation
+---
+
+## Plot
+
+```{r}
+plot(wt~hp,mtcars)
+```
+
+## Frequency
+
+```{r}
+library(ggplot2)
+library(pander)
+emphasize.cells(which(head(cars,5)>10, arr.ind=TRUE))
+pander(head(cars,5))
+
+```
+
+
+## Slide with Plot
+
+```{r, echo=FALSE}
+pander(head(iris,5), emphasize.rows(2))
+#emphasize.cells( which(head(iris,5)>1
+
+
+```
+

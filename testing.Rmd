@@ -1,0 +1,26 @@
+---
+title: "test"
+output: pdf_document
+---
+
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+library(knitr)
+kable(head(mtcars,2))
+
+library(data.table)
+dt <- data.table(mtcars)
+kable(dt[,.N,by=gear])
+
+library(pander)
+pander(table(mtcars$gear))
+
+
+fit <- lm(mpg~wt, data=mtcars)
+#plot(mpg~wt,dt)
+#abline(fit, col = 'red')
+#summary(fit)
+pander(fit, caption='foobar')
+```
