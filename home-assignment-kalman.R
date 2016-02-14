@@ -68,12 +68,12 @@ flights$plane_manufacturer <- factor(flights$plane_manufacturer)
 #factor plane_engine
 flights$plane_engine <- factor(flights$plane_engine)
 
-min_dist <- floor(min(flights$DistanceKMs, na.rm = TRUE))
-max_dist <- round(max(flights$DistanceKMs, na.rm = TRUE))
+min_dist <- 300#floor(min(flights$DistanceKMs, na.rm = TRUE))
+max_dist <- 1000#round(max(flights$DistanceKMs, na.rm = TRUE))
 
 
 from<-as.Date('2013-01-01')
-to<-as.Date('2013-01-14')
+to<-as.Date('2013-12-31')
 
 #min_dist
 #max_dist
@@ -82,7 +82,7 @@ to<-as.Date('2013-01-14')
 
 #1: list flights in range of distance on the given date range -> table
 str(flights)
-res<- flights[DistanceKMs<300 & DistanceKMs>250 & depart_date>=from & depart_date<=to]
+res<- flights[DistanceKMs<max_dist & DistanceKMs>min_dist & depart_date>=from & depart_date<=to]
 str(res)
 output<-res[,c("depart_date","depart_time","origin_airport_name","dest_airport_name","DistanceKMs","carrier_name","dep_delay","arr_delay"),with=FALSE]
 setorder(output,depart_date,depart_time)
@@ -98,6 +98,10 @@ res[,.N, by=dest_airport_name]
 #3: show average delay by destination
 plot_data<-res[, .('average_delay'=mean(arr_delay, na.rm = TRUE)), by = dest_airport_name]
 ggplot(plot_data , aes(x = dest_airport_name, y = average_delay,fill=dest_airport_name)) + geom_bar(width = 1, stat = "identity") +coord_flip() + xlab("Aiport") + ylab("Average Delay") + ggtitle("Average Delay per Airport")
+
+#3.1 Average delay by carrier
+plot_data<-res[, .('average_delay'=mean(arr_delay, na.rm = TRUE)), by = carrier_name]
+ggplot(plot_data , aes(x = carrier_name, y = average_delay,fill=carrier_name)) + geom_bar(width = 1, stat = "identity") +coord_flip() + xlab("Aiport") + ylab("Average Delay") + ggtitle("Average Delay by Carrier")
 
 #4: show average flights per weekday (Pie chart)
 data<-flights[,.('total_flights'=.N),by=DayOfWeek]
