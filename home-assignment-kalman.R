@@ -103,6 +103,15 @@ ggplot(plot_data , aes(x = dest_airport_name, y = average_delay,fill=dest_airpor
 plot_data<-res[, .('average_delay'=mean(arr_delay, na.rm = TRUE)), by = carrier_name]
 ggplot(plot_data , aes(x = carrier_name, y = average_delay,fill=carrier_name)) + geom_bar(width = 1, stat = "identity") +coord_flip() + xlab("Aiport") + ylab("Average Delay") + ggtitle("Average Delay by Carrier")
 
+#3.2 On Time ratio by carrier
+on_time <- res[arr_delay<=0,.('on_time_count'=.N),by = carrier_name]
+total_flight <- res[,.('total_flights'=.N),by = carrier_name]
+
+flight_stat <- merge(total_flight, on_time, by.x = 'carrier_name', by.y = 'carrier_name')
+
+flight_stat$on_time_ratio=flight_stat$on_time_count*100 / flight_stat$total_flights
+flight_stat
+
 #4: show average flights per weekday (Pie chart)
 data<-flights[,.('total_flights'=.N),by=DayOfWeek]
 
