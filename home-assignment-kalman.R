@@ -68,8 +68,8 @@ flights$plane_manufacturer <- factor(flights$plane_manufacturer)
 #factor plane_engine
 flights$plane_engine <- factor(flights$plane_engine)
 
-min_dist <- 300#floor(min(flights$DistanceKMs, na.rm = TRUE))
-max_dist <- 1000#round(max(flights$DistanceKMs, na.rm = TRUE))
+min_dist <- floor(min(flights$DistanceKMs, na.rm = TRUE))
+max_dist <- round(max(flights$DistanceKMs, na.rm = TRUE))
 
 
 from<-as.Date('2013-01-01')
@@ -89,7 +89,7 @@ setorder(output,depart_date,depart_time)
 output
 
 #1.1 show count by carrier
-res[,.N, by=carrier_name]
+flights_per_carrier <- res[,.N, by=carrier_name]
 
 
 #2: show histogram by destination count for date range
